@@ -3,6 +3,7 @@ import 'package:congnus_test/widgets/user_card.dart';
 import 'package:flutter/material.dart';
 
 import '../api/api_service.dart';
+import '../search_delegate.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -31,6 +32,17 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text("Users"),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate: UserSearchDelegate(_userModel!),
+              );
+            },
+          ),
+        ],
       ),
       body: _userModel == null || _userModel!.isEmpty
           ? const Center(

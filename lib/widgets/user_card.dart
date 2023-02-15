@@ -29,10 +29,16 @@ class _UserCardState extends State<UserCard> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Image.network(avatarUrl),
-          const SizedBox(
-            width: 16,
+          ClipRRect(
+            borderRadius: BorderRadius.circular(50),
+            child: Image.network(
+              avatarUrl,
+              width: 64,
+              height: 64,
+              fit: BoxFit.cover,
+            ),
           ),
+          const SizedBox(width: 20),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceAround,
