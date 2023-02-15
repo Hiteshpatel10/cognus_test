@@ -101,7 +101,9 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text('${widget.user.name} profile'),
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
