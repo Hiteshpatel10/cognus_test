@@ -6,7 +6,7 @@ import 'package:congnus_test/model/user_model.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  Future<List<User>?> getUsers() async {
+  Future<List<User>> getUsers() async {
     try {
       var url = Uri.parse(ApiConstants.userAPI);
       var response = await http.get(url);
@@ -18,5 +18,6 @@ class ApiService {
     } catch (e) {
       log(e.toString());
     }
+    return [];
   }
 }

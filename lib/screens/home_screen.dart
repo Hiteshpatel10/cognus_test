@@ -13,7 +13,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late List<User>? _userModel = [];
+  late List<User> _userModel = [];
 
   @override
   void initState() {
@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _getData() async {
-    _userModel = (await ApiService().getUsers())!;
+    _userModel = (await ApiService().getUsers());
     Future.delayed(const Duration(seconds: 1)).then((value) => setState(() {}));
   }
 
@@ -38,28 +38,28 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               showSearch(
                 context: context,
-                delegate: UserSearchDelegate(_userModel!),
+                delegate: UserSearchDelegate(_userModel),
               );
             },
           ),
         ],
       ),
-      body: _userModel == null || _userModel!.isEmpty
+      body: _userModel.isEmpty
           ? const Center(
               child: CircularProgressIndicator(),
             )
           : Padding(
               padding: const EdgeInsets.all(8.0),
               child: ListView.builder(
-                itemCount: _userModel!.length,
+                itemCount: _userModel.length,
                 itemBuilder: (context, index) {
-                  User user = _userModel![index];
+                  User user = _userModel[index];
                   return GestureDetector(
                       onTap: () {
                         Navigator.pushNamed(context, '/user-detail',
                             arguments: user);
                       },
-                      child: UserCard(name: user.name, email: user.email));
+                      child: UserCard(user.name, user.email));
                 },
               ),
             ),
