@@ -60,14 +60,19 @@ class UserSearchDelegate extends SearchDelegate<User> {
       itemCount: results.length,
       itemBuilder: (context, index) {
         final user = results[index];
-        return Card(
-          child: ListTile(
-            title: Text(user.name),
-            subtitle: Text(user.email),
-            onTap: () {
-              close(context, user);
-              Navigator.pushNamed(context, '/user-detail', arguments: user);
-            },
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 16),
+          child: Card(
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(16))),
+            child: ListTile(
+              title: Text(user.name),
+              subtitle: Text(user.email),
+              onTap: () {
+                close(context, user);
+                Navigator.pushNamed(context, '/user-detail', arguments: user);
+              },
+            ),
           ),
         );
       },

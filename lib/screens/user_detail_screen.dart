@@ -1,10 +1,14 @@
 import 'dart:ui';
 
 import 'package:congnus_test/model/user_model.dart';
+import 'package:congnus_test/shape/polygon.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../api/api_constants.dart';
+import '../widgets/address_detail.dart';
+import '../widgets/company_detail.dart';
+import '../widgets/contact_detail.dart';
 
 class UserDetailScreen extends StatefulWidget {
   final User user;
@@ -20,12 +24,6 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
   TextStyle contactInfoTextStyle = TextStyle(
     fontSize: 18.0,
     color: Colors.teal.shade900,
-    fontWeight: FontWeight.w500,
-  );
-
-  TextStyle addressTextStyle = const TextStyle(
-    fontSize: 18.0,
-    color: Colors.black,
     fontWeight: FontWeight.w500,
   );
 
@@ -101,9 +99,6 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('${widget.user.name} profile'),
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -116,13 +111,20 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                         "https://i.pinimg.com/564x/2d/0f/79/2d0f79b6194ce739ee53e5ace7eb2d35.jpg"),
                     fit: BoxFit.cover),
               ),
-              child: SizedBox(
-                width: double.infinity,
-                child: Container(
-                  alignment: const Alignment(0.0, 4.5),
-                  child: CircleAvatar(
-                    backgroundImage: NetworkImage(avatarUrl),
-                    radius: 60.0,
+              child: Container(
+                alignment: const Alignment(0.0, 3.5),
+                child: ClipShadowPath(
+                  shadow: Shadow(
+                    color: Colors.grey.withOpacity(0.8),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                  clipper: MyPolygon(),
+                  child: Image.network(
+                    avatarUrl,
+                    width: 128,
+                    height: 110,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
@@ -149,140 +151,53 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
             ),
             const SizedBox(height: 10),
 
-            // Company Details
             Container(
               width: double.infinity,
-              margin:
-                  const EdgeInsets.symmetric(vertical: 5.0, horizontal: 25.0),
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    children: [
-                      Text(
-                        widget.user.company.name,
-                        style: TextStyle(
-                          fontSize: 22,
-                          color: Colors.teal.shade900,
-                          fontWeight: FontWeight.w700,
-                        ),
+              margin: const EdgeInsets.fromLTRB(25.0, 25.0, 25.0, 10.0),
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Card(
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(16))),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        children: [
+                          companyDetail(widget.user.company),
+                          //Contact Details
+                          contactDetail(
+                              widget.user, openWebsite, openPhone, openEmail),
+                        ],
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        widget.user.company.catchPhrase,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.teal.shade800,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        widget.user.company.bs,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.teal.shade800,
-                          fontWeight: FontWeight.w300,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-            ),
-
-            Container(
-              width: double.infinity,
-              margin:
-                  const EdgeInsets.symmetric(vertical: 5.0, horizontal: 25.0),
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () => openWebsite(),
-                        child: ListTile(
-                          leading: const Icon(
-                            Icons.web,
-                            color: Colors.teal,
-                          ),
-                          title: Text(
-                            widget.user.website,
-                            style: contactInfoTextStyle,
+                  const Positioned(
+                    top: -35,
+                    right: 15,
+                    child: PhysicalModel(
+                      color: Colors.black,
+                      elevation: 15.0,
+                      shape: BoxShape.circle,
+                      child: CircleAvatar(
+                        radius: 45.0,
+                        backgroundColor: Colors.teal,
+                        child: Padding(
+                          padding: EdgeInsets.all(4.0),
+                          child: Text(
+                            "Company \n Info",
+                            textAlign: TextAlign.center,
                           ),
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () => openPhone(),
-                        child: ListTile(
-                          leading: const Icon(
-                            Icons.phone,
-                            color: Colors.teal,
-                          ),
-                          title: Text(widget.user.phone,
-                              style: contactInfoTextStyle),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () => openEmail(),
-                        child: ListTile(
-                          leading: const Icon(
-                            Icons.email,
-                            color: Colors.teal,
-                          ),
-                          title: Text(widget.user.email,
-                              style: contactInfoTextStyle),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
 
             //Address
-            GestureDetector(
-              onTap: () => openLocation(),
-              child: ClipRect(
-                child: Container(
-                  width: double.infinity,
-                  margin: const EdgeInsets.symmetric(
-                      vertical: 5.0, horizontal: 25.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    image: const DecorationImage(
-                      image: AssetImage('assets/location.jpg'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                    child: Container(
-                      decoration:
-                          BoxDecoration(color: Colors.white.withOpacity(0.0)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Text(widget.user.address.suite,
-                                style: addressTextStyle),
-                            Text(widget.user.address.street,
-                                style: addressTextStyle),
-                            Text(widget.user.address.city,
-                                style: addressTextStyle),
-                            Text(widget.user.address.zipcode,
-                                style: addressTextStyle),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            )
+            addressDetail(widget.user.address, openLocation),
           ],
         ),
       ),

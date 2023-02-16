@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../api/api_service.dart';
 import '../search_delegate.dart';
+import '../widgets/tab_capsule.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -28,39 +29,40 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    void searchUser() {
+      showSearch(
+        context: context,
+        delegate: UserSearchDelegate(_userModel),
+      );
+    }
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Users"),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              showSearch(
-                context: context,
-                delegate: UserSearchDelegate(_userModel),
-              );
-            },
-          ),
-        ],
-      ),
       body: _userModel.isEmpty
           ? const Center(
               child: CircularProgressIndicator(),
             )
           : Padding(
               padding: const EdgeInsets.all(8.0),
-              child: ListView.builder(
-                itemCount: _userModel.length,
-                itemBuilder: (context, index) {
-                  User user = _userModel[index];
-                  return GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(context, '/user-detail',
-                            arguments: user);
+              child: Column(
+                children: [
+                  tabCapsule(searchUser),
+                  Expanded(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: _userModel.length,
+                      itemBuilder: (context, index) {
+                        User user = _userModel[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/user-detail',
+                                arguments: user);
+                          },
+                          child: userCard(user.name, user.email),
+                        );
                       },
-                      child: UserCard(user.name, user.email));
-                },
+                    ),
+                  ),
+                ],
               ),
             ),
     );
